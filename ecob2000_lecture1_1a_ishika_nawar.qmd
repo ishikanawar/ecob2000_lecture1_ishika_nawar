@@ -1,0 +1,254 @@
+---
+title: "ecob2000_week1_lecture1_and_1a_ishika_nawar"
+format: html
+editor: visual
+---
+
+## Quarto
+
+Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+
+## Running Code
+
+When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+
+```{r}
+1 + 1
+```
+
+You can add options to executable code like this
+
+```{r}
+#| echo: false
+2 * 2
+```
+
+The `echo: false` option disables the printing of code (only output is displayed).
+
+**Notes from Lecture 1:**
+
+```{r}
+x <- 1:50
+w <- 1 + sqrt(x)/2
+example1 <- data.frame(x=x, y= x + rnorm(x)*w)
+attach(example1)
+```
+
+```{r}
+fm <- lm(y ~ x)
+summary(fm)
+```
+
+```{r}
+lrf <- lowess(x, y)
+plot(x, y)
+lines(x, lrf$y)
+abline(0, 1, lty=3)
+abline(coef(fm))
+```
+
+```{r}
+detach()
+```
+
+```{r}
+load("~/Documents/R Projects/ecob2000_lecture1/d_HHP2020_24.Rdata")
+d_HHP2020_24[1:10,1:6]
+```
+
+```{r}
+attach(d_HHP2020_24)
+```
+
+```{r}
+summary(d_HHP2020_24)
+```
+
+```{r}
+summary(Age[Gender == "female"])
+```
+
+```{r}
+summary(Age[Gender == "male"])
+```
+
+```{r}
+summary(Age[Gender == "trans"])
+```
+
+```{r}
+summary(Age[Gender == "other"])
+```
+
+```{r}
+mean(Age[Gender == "female"])
+```
+
+```{r}
+sd(Age[Gender == "female"])
+```
+
+```{r}
+mean(Age[Gender == "male"])
+```
+
+```{r}
+sd(Age[Gender == "male"])
+```
+
+**Notes from Lecture 1a:**
+
+```{r}
+hist(Age[ (Age > 80) ])
+```
+
+```{r}
+mean(Age[ (Gender == "female") & (Age < 88) ]) 
+```
+
+```{r}
+summary(Education)
+```
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+summary(state)
+```
+
+```         
+##              Alabama               Alaska              Arizona 
+##                13230                15970                26059 
+##             Arkansas           California             Colorado 
+##                12931                71958                24746 
+##          Connecticut             Delaware District of Columbia 
+##                16499                11555                13008 
+##              Florida              Georgia               Hawaii 
+##                33825                23538                10694 
+##                Idaho             Illinois              Indiana 
+##                18517                22348                17907 
+##                 Iowa               Kansas             Kentucky 
+##                15547                17328                14104 
+##            Louisiana                Maine             Maryland 
+##                12481                10524                22276 
+##        Massachusetts             Michigan            Minnesota 
+##                26236                26479                21160 
+##          Mississippi             Missouri              Montana 
+##                10391                16868                11519 
+##             Nebraska               Nevada        New Hampshire 
+##                15248                15658                15337 
+##           New Jersey           New Mexico             New York 
+##                18603                17666                18996 
+##       North Carolina         North Dakota                 Ohio 
+##                17425                 8649                16312 
+##             Oklahoma               Oregon         Pennsylvania 
+##                15025                24682                24969 
+##         Rhode Island       South Carolina         South Dakota 
+##                 9783                14910                 9936 
+##            Tennessee                Texas                 Utah 
+##                16977                49059                25831 
+##              Vermont             Virginia           Washington 
+##                10607                25432                37615 
+##        West Virginia            Wisconsin              Wyoming 
+##                11142                17272                 9958
+```
+
+```{r}
+d_HHP2020_24 %>%
+  group_by(State) %>%
+  summarize(
+    avg = mean(Age),
+    stdev = sd(Age), 
+    n_obs = n()
+  ) 
+```
+
+```         
+## # A tibble: 51 × 4
+##    State                  avg stdev n_obs
+##    <fct>                <dbl> <dbl> <int>
+##  1 Alabama               52.5  16.0 13230
+##  2 Alaska                50.9  15.8 15970
+##  3 Arizona               54.4  16.4 26059
+##  4 Arkansas              52.2  16.0 12931
+##  5 California            52.0  15.9 71958
+##  6 Colorado              51.5  16.1 24746
+##  7 Connecticut           52.7  15.8 16499
+##  8 Delaware              55.5  16.0 11555
+##  9 District of Columbia  48.4  15.5 13008
+## 10 Florida               55.7  16.0 33825
+## # ℹ 41 more rows
+```
+
+```{r}
+d_HHP2020_24 %>%
+  group_by(State) %>%
+  summarize(
+    age90th = quantile(Age,probs = 0.9),
+    age10th = quantile(Age,probs = 0.1), 
+    n_obs = n()
+  ) %>%
+  arrange(desc(age90th), .by_group = TRUE)
+```
+
+```         
+## # A tibble: 51 × 4
+##    State          age90th age10th n_obs
+##    <fct>            <dbl>   <dbl> <int>
+##  1 Florida             76      33 33825
+##  2 Arizona             75      31 26059
+##  3 Delaware            75      33 11555
+##  4 Hawaii              75      33 10694
+##  5 New Mexico          75      33 17666
+##  6 Maine               74      32 10524
+##  7 Montana             74      31 11519
+##  8 Nevada              74      32 15658
+##  9 New Hampshire       74      32 15337
+## 10 South Carolina      74      31 14910
+## # ℹ 41 more rows
+```
+
+```{r}
+table(Education,Gender)
+```
+
+```{r}
+xtabs(~ Education + Gender)
+```
+
+```{r}
+xtabs(~ Education + Gender)
+```
+
+```{r}
+prop.table(table(Education,Gender))
+```
+
+```{r}
+mean(Age[(Region == "Northeast")])
+```
+
+```         
+## [1] 52.48172
+```
+
+```{r}
+# alternatively
+restrict1 <- as.logical((Region == "Northeast"))
+dat_northeast <- subset(d_HHP2020_24, restrict1)
+
+detach()
+attach(dat_northeast)
+
+mean(Age)
+```
+
+```         
+## [1] 52.48172
+```
+
+```{r}
+detach()
+```
